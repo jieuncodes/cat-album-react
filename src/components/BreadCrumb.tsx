@@ -17,8 +17,9 @@ export default function BreadCrumb({
     const id = target.id;
     const newData = await fetchData(id);
     setData(newData);
-
-    setPath(path.slice(0, path.findIndex((node) => node.id === id) + 1));
+    const clickedIndex = path.findIndex((node) => node.id === id);
+    if (clickedIndex === path.length - 1) return;
+    setPath(path.slice(0, clickedIndex + 1));
   };
   return (
     <nav className="Breadcrumb">
