@@ -5,15 +5,13 @@ interface BreadCrumbProps {
   setPath: (path: pathProps[]) => void;
   appendToPath: (newpath: pathProps) => void;
   setBackPath: () => void;
-  onPathChange: (id: string) => void;
+  onDirChange: (id: string) => void;
 }
 
 export default function BreadCrumb({
   path,
-  appendToPath,
-  setBackPath,
   setPath,
-  onPathChange,
+  onDirChange,
 }: BreadCrumbProps) {
   const handleBreadCrumbClick = async (
     event: React.MouseEvent<HTMLDivElement>
@@ -25,7 +23,7 @@ export default function BreadCrumb({
     if (clickedIndex === path.length - 1) return;
 
     setPath(path.slice(0, clickedIndex + 1));
-    onPathChange(id);
+    onDirChange(id);
   };
 
   return (

@@ -1,42 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import BreadCrumb from "./components/BreadCrumb";
 import Nodes from "./components/Nodes";
 import { useFetch } from "./hooks/useFetch";
-
-export interface catProps {
-  id: string;
-  name: string;
-  type: string;
-  filePath: string;
-  parent: string;
-}
-
-export interface pathProps {
-  id: string;
-  name: string;
-}
+import { useCache } from "./hooks/useCache";
+import { fetchNodeData } from "./api";
+import { usePath } from "./hooks/usePath";
 
 function App() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const fetchState = useFetch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [path, setPath] = useState<pathProps[]>([{ id: "-1", name: "root" }]);
+  const pathState = usePath([{ id: "-1", name: "root" }]);
+  const cacheState = useCache();
 
-  const [cache, setCache] = useState<{ [key: string]: catProps[] }>({});
+  const { data, setData, error } = fetchState;
+  const { cache, addToCache } = cacheState;
 
-  useEffect(() => {
-    if (fetchState.data || fetchState.error) {
-      setIsLoading(false);
-    }
-  }, [fetchState.data, fetchState.error]);
-
-  const onPathChange = async (id: string) => {
-    if (cache[id]) {
-      fetchState.setData(cache[id]);
+  const onDirChange = async (id: string) => {
+    let cachedData = cache[id];
+    if (cachedData) {
+      setData(cachedData);
     } else {
-      fetchState.setData([]);
+      setIsLoading(true);
+      const newData = await fetchNodeData(id);
+      setData(newData);
+      addToCache(id, newData);
     }
   };
+
+  useEffect(() => {
+    if (data.length || error) {
+      setIsLoading(false);
+    }
+  }, [data, error]);
 
   return (
     <>
@@ -47,17 +44,17 @@ function App() {
           </div>
         </div>
       )}
-      <BreadCrumb path={path} setPath={setPath} onPathChange={onPathChange} />
-      {fetchState.data && (
+      <BreadCrumb {...pathState} onDirChange={onDirChange} />
+      {data && (
         <Nodes
-          {...fetchState}
-          path={path}
-          setPath={setPath}
-          cache={cache}
-          setCache={setCache}
           setLoading={setIsLoading}
+          {...fetchState}
+          {...pathState}
+          {...cacheState}
         />
       )}
     </>
   );
 }
+
+export default App;
