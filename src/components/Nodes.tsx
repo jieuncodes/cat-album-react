@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { catProps, pathProps } from "../App";
 import { fetchNodeData } from "../api";
 import Modal from "./Modal";
+import { catProps, pathProps } from "../types";
 
 interface NodesProps {
   data: catProps[];
   setData: (data: catProps[]) => void;
   path: pathProps[];
-  setPath: (path: pathProps[]) => void;
+  appendToPath: (newpath: pathProps) => void;
+  setBackPath: () => void;
   cache: { [key: string]: catProps[] };
-  setCache: (cache: { [key: string]: catProps[] }) => void;
+  addToCache: (id: string, data: catProps[]) => void;
   setLoading: (loading: boolean) => void;
 }
 
@@ -17,9 +18,10 @@ export default function Nodes({
   data,
   setData,
   path,
-  setPath,
+  appendToPath,
+  setBackPath,
   cache,
-  setCache,
+  addToCache,
   setLoading,
 }: NodesProps) {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -47,18 +49,15 @@ export default function Nodes({
       try {
         setLoading(true);
         newData = await fetchNodeData(id);
-        setCache({ ...cache, [id]: newData });
+        setData(newData);
+        addToCache(id, newData);
       } catch (error) {
         console.log("error");
-      } finally {
-        setLoading(false);
       }
     }
 
-    setData(newData);
-
     if (type === "DIRECTORY") {
-      setPath([...path, { id, name: target.dataset.name as string }]);
+      appendToPath({ id, name: target.dataset.name as string });
     } else if (type === "FILE") {
       const filePath = target.dataset.filepath as string;
       setModalFilePath(filePath);
@@ -73,7 +72,7 @@ export default function Nodes({
     setLoading(true);
     const newData = await fetchNodeData(id);
     setData(newData);
-    setPath(path.slice(0, path.length - 1));
+    setBackPath();
   };
 
   return (

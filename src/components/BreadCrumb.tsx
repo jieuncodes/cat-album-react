@@ -1,14 +1,17 @@
-import { pathProps } from "../App";
-import { useFetch } from "../hooks/useFetch";
+import { pathProps } from "../types";
 
 interface BreadCrumbProps {
   path: pathProps[];
   setPath: (path: pathProps[]) => void;
+  appendToPath: (newpath: pathProps) => void;
+  setBackPath: () => void;
   onPathChange: (id: string) => void;
 }
 
 export default function BreadCrumb({
   path,
+  appendToPath,
+  setBackPath,
   setPath,
   onPathChange,
 }: BreadCrumbProps) {
@@ -19,7 +22,6 @@ export default function BreadCrumb({
     const id = target.id;
 
     const clickedIndex = path.findIndex((node) => node.id === id);
-
     if (clickedIndex === path.length - 1) return;
 
     setPath(path.slice(0, clickedIndex + 1));
