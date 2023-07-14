@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
-import { fetchData } from "./api";
-import Nodes from "./components/Nodes";
 import BreadCrumb from "./components/BreadCrumb";
+import Nodes from "./components/Nodes";
+import { useFetch } from "./hooks/useFetch";
 
 export interface catProps {
   id: string;
@@ -18,48 +18,46 @@ export interface pathProps {
 }
 
 function App() {
-  const [data, setData] = useState<catProps[] | undefined>();
+  const fetchState = useFetch();
+  const [isLoading, setIsLoading] = useState(true);
   const [path, setPath] = useState<pathProps[]>([{ id: "-1", name: "root" }]);
-  const [loading, setLoading] = useState<boolean>(true);
+
   const [cache, setCache] = useState<{ [key: string]: catProps[] }>({});
 
   useEffect(() => {
-    const fetchNodes = async () => {
-      try {
-        const data = await fetchData();
-        setData(data);
-      } catch (error) {
-        console.log("error!!");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchNodes();
-  }, []);
+    if (fetchState.data || fetchState.error) {
+      setIsLoading(false);
+    }
+  }, [fetchState.data, fetchState.error]);
+
+  const onPathChange = async (id: string) => {
+    if (cache[id]) {
+      fetchState.setData(cache[id]);
+    } else {
+      fetchState.setData([]);
+    }
+  };
 
   return (
     <>
-      {loading && (
+      {isLoading && (
         <div className="Modal Loading">
           <div className="content">
             <img src="./nyan-cat.gif" />
           </div>
         </div>
       )}
-      <BreadCrumb path={path} setPath={setPath} setData={setData} />
-      {data && (
+      <BreadCrumb path={path} setPath={setPath} onPathChange={onPathChange} />
+      {fetchState.data && (
         <Nodes
-          data={data}
-          setData={setData}
+          {...fetchState}
           path={path}
           setPath={setPath}
           cache={cache}
           setCache={setCache}
-          setLoading={setLoading}
+          setLoading={setIsLoading}
         />
       )}
     </>
   );
 }
-
-export default App;
