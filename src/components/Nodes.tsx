@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { catProps, pathProps } from "../App";
-import { fetchData } from "../api";
+import { fetchNodeData } from "../api";
 import Modal from "./Modal";
 
 interface NodesProps {
@@ -12,6 +12,7 @@ interface NodesProps {
   setCache: (cache: { [key: string]: catProps[] }) => void;
   setLoading: (loading: boolean) => void;
 }
+
 export default function Nodes({
   data,
   setData,
@@ -45,7 +46,7 @@ export default function Nodes({
     } else {
       try {
         setLoading(true);
-        newData = await fetchData(id);
+        newData = await fetchNodeData(id);
         setCache({ ...cache, [id]: newData });
       } catch (error) {
         console.log("error");
@@ -68,8 +69,9 @@ export default function Nodes({
   };
 
   const handleGoBack = async () => {
-    const id = path[path.length - 1].id;
-    const newData = await fetchData(id);
+    const id = path[path.length - 2].id;
+    setLoading(true);
+    const newData = await fetchNodeData(id);
     setData(newData);
     setPath(path.slice(0, path.length - 1));
   };

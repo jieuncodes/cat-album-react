@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { catProps } from "../App";
-
-const API_ROOT =
-  "https://l9817xtkq3.execute-api.ap-northeast-2.amazonaws.com/dev/";
+import { fetchNodeData } from "../api";
 
 export function useFetch(id?: string) {
   const [data, setData] = useState<catProps[]>([]);
@@ -11,8 +9,7 @@ export function useFetch(id?: string) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_ROOT}${id ?? ""}`);
-        const data = await res.json();
+        const data = await fetchNodeData(id);
         setData(data);
       } catch (error) {
         setError(error as string);
