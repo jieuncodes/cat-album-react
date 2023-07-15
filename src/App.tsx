@@ -48,6 +48,7 @@ function App() {
       {data && (
         <Nodes
           setLoading={setIsLoading}
+          onDirChange={onDirChange}
           {...fetchState}
           {...pathState}
           {...cacheState}
