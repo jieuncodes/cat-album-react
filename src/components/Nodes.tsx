@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { fetchNodeData } from "../api";
 import Modal from "./Modal";
 import { catProps, pathProps } from "../types";
+import { useNodeInteraction } from "../hooks/useNodeInteractions";
 
 interface NodesProps {
   data: catProps[];
@@ -15,6 +15,14 @@ interface NodesProps {
   onDirChange: (id: string) => void;
 }
 
+const iconType = (type: string) => {
+  if (type === "DIRECTORY") {
+    return "./directory.png";
+  } else {
+    return "./file.png";
+  }
+};
+
 export default function Nodes({
   data,
   setData,
@@ -25,40 +33,13 @@ export default function Nodes({
   onDirChange,
 }: NodesProps) {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [modalFilePath, setModalFilePath] = useState<string>("");
 
-  const iconType = (type: string) => {
-    if (type === "DIRECTORY") {
-      return "./directory.png";
-    } else {
-      return "./file.png";
-    }
-  };
-
-  const handleNodeClick = async (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    const id = target.id;
-    const type = target.dataset.type as string;
-
-    onDirChange(id);
-
-    if (type === "DIRECTORY") {
-      appendToPath({ id, name: target.dataset.name as string });
-    } else if (type === "FILE") {
-      setModalFilePath(target.dataset.filepath as string);
-      setModalVisible(true);
-    } else {
-      return;
-    }
-  };
-
-  const handleGoBack = async () => {
-    const id = path[path.length - 2].id;
-    setLoading(true);
-    const newData = await fetchNodeData(id);
-    setData(newData);
-    setBackPath();
-  };
+  const { handleNodeClick, handleGoBack, modalFilePath } = useNodeInteraction({
+    appendToPath,
+    setBackPath,
+    setLoading,
+    setData,
+  });
 
   return (
     <>
@@ -67,7 +48,7 @@ export default function Nodes({
       )}
       <div className="Nodes">
         {path.length > 1 && (
-          <div className="Node" onClick={handleGoBack}>
+          <div className="Node" onClick={handleGoBack(path)}>
             <img src="./prev.png" alt="prev-icon" />
           </div>
         )}
@@ -79,7 +60,7 @@ export default function Nodes({
             data-type={node.type}
             data-filepath={node.filePath}
             className="Node"
-            onClick={handleNodeClick}
+            onClick={handleNodeClick(onDirChange)}
           >
             <img
               src={iconType(node.type)}
