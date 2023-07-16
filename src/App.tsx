@@ -45,9 +45,10 @@ function App() {
         </div>
       )}
       <BreadCrumb {...pathState} onDirChange={onDirChange} />
+
       {data && (
         <Nodes
-          setLoading={setIsLoading}
+          setIsLoading={setIsLoading}
           onDirChange={onDirChange}
           {...fetchState}
           {...pathState}

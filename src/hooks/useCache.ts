@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { catProps } from "../types";
+import { CatProps } from "../types";
 
 export function useCache() {
-  const [cache, setCache] = useState<{ [key: string]: catProps[] }>({});
+  const [cache, setCache] = useState<{ [key: string]: CatProps[] }>({});
 
-  const addToCache = (id: string, data: catProps[]) => {
+  const addToCache = (id: string, data: CatProps[]) => {
     setCache((prevCache) => ({ ...prevCache, [id]: data }));
   };
 

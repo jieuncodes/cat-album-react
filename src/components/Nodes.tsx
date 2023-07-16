@@ -1,19 +1,6 @@
-import { useState } from "react";
 import Modal from "./Modal";
-import { catProps, pathProps } from "../types";
+import { NodesProps } from "../types";
 import { useNodeInteraction } from "../hooks/useNodeInteractions";
-
-interface NodesProps {
-  data: catProps[];
-  setData: (data: catProps[]) => void;
-  path: pathProps[];
-  appendToPath: (newpath: pathProps) => void;
-  setBackPath: () => void;
-  cache: { [key: string]: catProps[] };
-  addToCache: (id: string, data: catProps[]) => void;
-  setLoading: (loading: boolean) => void;
-  onDirChange: (id: string) => void;
-}
 
 const iconType = (type: string) => {
   if (type === "DIRECTORY") {
@@ -26,18 +13,22 @@ const iconType = (type: string) => {
 export default function Nodes({
   data,
   setData,
+  setIsLoading,
   path,
   appendToPath,
   setBackPath,
-  setLoading,
   onDirChange,
 }: NodesProps) {
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-
-  const { handleNodeClick, handleGoBack, modalFilePath } = useNodeInteraction({
+  const {
+    handleNodeClick,
+    handleGoBack,
+    modalFilePath,
+    modalVisible,
+    setModalVisible,
+  } = useNodeInteraction({
     appendToPath,
     setBackPath,
-    setLoading,
+    setIsLoading,
     setData,
   });
 
@@ -54,13 +45,13 @@ export default function Nodes({
         )}
         {data?.map((node) => (
           <div
+            className="Node"
             key={node.id}
             id={node.id}
             data-name={node.name}
             data-type={node.type}
             data-filepath={node.filePath}
-            className="Node"
-            onClick={handleNodeClick(onDirChange)}
+            onClick={onDirChange && handleNodeClick(onDirChange)}
           >
             <img
               src={iconType(node.type)}

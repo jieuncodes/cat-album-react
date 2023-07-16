@@ -1,16 +1,8 @@
-import { pathProps } from "../types";
-
-interface BreadCrumbProps {
-  path: pathProps[];
-  setPath: (path: pathProps[]) => void;
-  appendToPath: (newpath: pathProps) => void;
-  setBackPath: () => void;
-  onDirChange: (id: string) => void;
-}
+import { BreadCrumbProps } from "../types";
 
 export default function BreadCrumb({
   path,
-  setPath,
+  appendToPath,
   onDirChange,
 }: BreadCrumbProps) {
   const handleBreadCrumbClick = async (
@@ -22,8 +14,8 @@ export default function BreadCrumb({
     const clickedIndex = path.findIndex((node) => node.id === id);
     if (clickedIndex === path.length - 1) return;
 
-    setPath(path.slice(0, clickedIndex + 1));
-    onDirChange(id);
+    appendToPath(path[clickedIndex]);
+    onDirChange && onDirChange(id);
   };
 
   return (

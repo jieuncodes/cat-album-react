@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { pathProps } from "../types";
+import { PathProps } from "../types";
 
-export function usePath(initialPath: pathProps[]) {
-  const [path, setPath] = useState<pathProps[]>(initialPath);
+export function usePath(initialPath: PathProps[]) {
+  const [path, setPath] = useState<PathProps[]>(initialPath);
 
-  const appendToPath = (newPath: pathProps) => {
+  const appendToPath = (newPath: PathProps) => {
     setPath((prevPath) => [...prevPath, newPath]);
   };
 

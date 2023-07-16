@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { fetchNodeData } from "../api";
-import { catProps } from "../types";
+import { CatProps } from "../types";
 
 export function useFetch(id?: string) {
-  const [data, setData] = useState<catProps[]>([]);
+  const [data, setData] = useState<CatProps[]>([]);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
