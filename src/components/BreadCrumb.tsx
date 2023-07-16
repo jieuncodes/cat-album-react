@@ -2,7 +2,7 @@ import { BreadCrumbProps } from "../types";
 
 export default function BreadCrumb({
   path,
-  appendToPath,
+  setPath,
   onDirChange,
 }: BreadCrumbProps) {
   const handleBreadCrumbClick = async (
@@ -14,10 +14,9 @@ export default function BreadCrumb({
     const clickedIndex = path.findIndex((node) => node.id === id);
     if (clickedIndex === path.length - 1) return;
 
-    appendToPath(path[clickedIndex]);
+    setPath(path.slice(0, clickedIndex + 1));
     onDirChange && onDirChange(id);
   };
-
   return (
     <nav className="Breadcrumb">
       {path.map((node) => (

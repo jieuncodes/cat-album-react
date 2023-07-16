@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import BreadCrumb from "./components/BreadCrumb";
 import Nodes from "./components/Nodes";
@@ -25,11 +25,18 @@ function App() {
       setIsLoading(true);
       const newData = await fetchNodeData(id);
       setData(newData);
-      addToCache(id, newData);
     }
   };
 
   useEffect(() => {
+    if (data) {
+      const currentPathId = pathState.path[pathState.path.length - 1].id;
+
+      if (!cache[currentPathId]) {
+        addToCache(currentPathId, data);
+      }
+    }
+
     if (data.length || error) {
       setIsLoading(false);
     }

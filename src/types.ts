@@ -3,12 +3,16 @@ export interface CatProps {
   name: string;
   type: string;
   filePath: string;
-  parent: string;
+  parent?: string;
 }
 
 export interface PathProps {
   id: string;
   name: string;
+}
+export interface PathInteractionProps {
+  path: PathProps[];
+  setPath: (path: PathProps[]) => void;
 }
 
 export interface CacheProps {
@@ -34,7 +38,7 @@ export interface FetchProps {
 export interface NodeInteractionProps {
   appendToPath: (path: PathProps) => void;
   setBackPath: () => void;
-  onDirChange?: (id: string) => void;
+  onDirChange: (id: string) => void;
 }
 
 export interface NodesProps extends NodeInteractionProps, FetchProps {
@@ -42,6 +46,6 @@ export interface NodesProps extends NodeInteractionProps, FetchProps {
   data: CatProps[];
 }
 
-export interface BreadCrumbProps extends NodeInteractionProps {
-  path: PathProps[];
-}
+export interface BreadCrumbProps
+  extends NodeInteractionProps,
+    PathInteractionProps {}

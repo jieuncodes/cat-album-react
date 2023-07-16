@@ -12,8 +12,6 @@ const iconType = (type: string) => {
 
 export default function Nodes({
   data,
-  setData,
-  setIsLoading,
   path,
   appendToPath,
   setBackPath,
@@ -28,8 +26,7 @@ export default function Nodes({
   } = useNodeInteraction({
     appendToPath,
     setBackPath,
-    setIsLoading,
-    setData,
+    onDirChange,
   });
 
   return (
@@ -47,11 +44,15 @@ export default function Nodes({
           <div
             className="Node"
             key={node.id}
-            id={node.id}
-            data-name={node.name}
-            data-type={node.type}
             data-filepath={node.filePath}
-            onClick={onDirChange && handleNodeClick(onDirChange)}
+            onClick={() =>
+              handleNodeClick({
+                id: node.id,
+                type: node.type,
+                name: node.name,
+                filePath: node.filePath,
+              })
+            }
           >
             <img
               src={iconType(node.type)}
