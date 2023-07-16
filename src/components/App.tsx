@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import "./App.css";
-import BreadCrumb from "./components/BreadCrumb";
-import Nodes from "./components/Nodes";
-import { useFetch } from "./hooks/useFetch";
-import { useCache } from "./hooks/useCache";
-import { fetchNodeData } from "./api";
-import { usePath } from "./hooks/usePath";
+import "../App.css";
+import BreadCrumb from "./BreadCrumb";
+import Nodes from "./Nodes";
+import { useFetch } from "../hooks/useFetch";
+import { useCache } from "../hooks/useCache";
+import { fetchNodeData } from "../api";
+import { usePath } from "../hooks/usePath";
 
 function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -29,18 +29,19 @@ function App() {
   };
 
   useEffect(() => {
-    if (data) {
-      const currentPathId = pathState.path[pathState.path.length - 1].id;
-
+    const currentPathId = pathState.path[pathState.path.length - 1].id;
+    if (data.length) {
       if (!cache[currentPathId]) {
         addToCache(currentPathId, data);
       }
     }
 
-    if (data.length || error) {
+    const isCached = currentPathId in cache;
+
+    if ((data && isCached) || error) {
       setIsLoading(false);
     }
-  }, [data, error]);
+  }, [data, error, cache]);
 
   return (
     <>
@@ -51,6 +52,7 @@ function App() {
           </div>
         </div>
       )}
+
       <BreadCrumb {...pathState} onDirChange={onDirChange} />
 
       {data && (
