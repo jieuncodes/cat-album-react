@@ -1,14 +1,7 @@
 import Modal from "./Modal";
 import { NodesProps } from "../types";
 import { useNodeInteraction } from "../hooks/useNodeInteractions";
-
-const iconType = (type: string) => {
-  if (type === "DIRECTORY") {
-    return "./directory.png";
-  } else {
-    return "./file.png";
-  }
-};
+import Node from "./Node";
 
 export default function Nodes({
   data,
@@ -41,25 +34,7 @@ export default function Nodes({
           </div>
         )}
         {data?.map((node) => (
-          <div
-            className="Node"
-            key={node.id}
-            data-filepath={node.filePath}
-            onClick={() =>
-              handleNodeClick({
-                id: node.id,
-                type: node.type,
-                name: node.name,
-                filePath: node.filePath,
-              })
-            }
-          >
-            <img
-              src={iconType(node.type)}
-              alt={`${node.type.toLowerCase()}-icon`}
-            />
-            <div>{node.name}</div>
-          </div>
+          <Node key={node.id} node={node} handleNodeClick={handleNodeClick} />
         ))}
       </div>
     </>

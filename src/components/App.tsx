@@ -23,8 +23,7 @@ function App() {
       setData(cachedData);
     } else {
       setIsLoading(true);
-      const newData = await fetchNodeData(id);
-      setData(newData);
+      setData(await fetchNodeData(id));
     }
   };
 
@@ -35,10 +34,7 @@ function App() {
         addToCache(currentPathId, data);
       }
     }
-
-    const isCached = currentPathId in cache;
-
-    if ((data && isCached) || error) {
+    if ((data && currentPathId in cache) || error) {
       setIsLoading(false);
     }
   }, [data, error, cache]);

@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useModalVisibility } from "../hooks/useModalVisibility";
 
 interface ModalProps {
   filePath: string;
@@ -10,38 +11,12 @@ const IMAGE_PATH_HEADER =
 export default function Modal({ filePath, setModalVisible }: ModalProps) {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (modalRef.current && (event.target as HTMLElement).tagName !== "IMG") {
-      setModalVisible(false);
-    }
-  };
-  const handleEscKey = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      setModalVisible(false);
-    }
-  };
-
-  const handleClickImage = (event: React.MouseEvent<HTMLImageElement>) => {
-    event.stopPropagation();
-  };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleEscKey);
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      window.removeEventListener("keydown", handleEscKey);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useModalVisibility({ modalRef, setModalVisible });
 
   return (
     <div className="Modal ImageViewer" ref={modalRef}>
       <div className="content">
-        <img
-          src={`${IMAGE_PATH_HEADER}${filePath}`}
-          onClick={handleClickImage}
-        />
+        <img src={`${IMAGE_PATH_HEADER}${filePath}`} />
       </div>
     </div>
   );
